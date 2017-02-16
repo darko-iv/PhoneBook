@@ -60,19 +60,17 @@ public class PhoneBook {
 			case 3:searchContact();break;
 			case 4: ViewContact();break;
 			}
-			try{
+		
 			    
 			      InputStreamReader isr=new InputStreamReader(System.in);
-			      System.out.println("Input n to continue");
+			      System.out.println("Input n to continue or e for end ");
 			      
 			      next=(char)isr.read();
 			      
-			     
+			     if(next=='e'){
+			    	 break;
 			     }
-			catch(IOException ie){}
-			     
-			     
-			    }
+		 }
 		
 		}
 	
@@ -106,26 +104,27 @@ public class PhoneBook {
 			   	System.out.println("Contact is added");
 	   
 			}
-			else{
+			}		
+			catch(Exception e){
 				System.out.println("Not valid phone");
 			}
-			}			
-			catch(Exception e){}
 	}
 	
-	public static void deletePhone(){
+	public static void deletePhone() throws IOException{
 		
 		     
-		     try{
+		     
 		         BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
 		         System.out.println("Name:");
 		         String key=br.readLine();
-		         table.remove(key); 
-		         System.out.println(key+" is deleted");	       
-		         }
-		     catch(IOException ie){
-		    	 
+		         if(table.containsKey(key)){
+		        	 table.remove(key); 
+		        	 System.out.println(key+" is deleted");	       
 		     }
+		     else{ 	 
+		         
+		         System.out.println(key+" is not in the Phonebook");	       
+		     		}
 		         
 	}
 	public static void searchContact(){
@@ -140,18 +139,18 @@ public class PhoneBook {
 					System.out.println(key+" "+cu);
 	      
 	     }
-	     else{ 
-	     System.out.println("Not found");}
-	     }catch(IOException ie){}
-	     
+	  
+	     }catch(IOException ie){
+	    	 System.out.println("Not found");
+	    	 }
+			 
 	     
 	    }
 	   }
 	 
-		
-	 
+	
 	   public static HashMap<String,String>  readList(){
-		   HashMap<String,String> phbook=new HashMap<>();
+		  // HashMap<String,String> phbook=new HashMap<>();
 		   
 		    try{
 		    	String line;
@@ -164,15 +163,15 @@ public class PhoneBook {
 		        String[] pom= pom2.split(",");
 	if((pom[1].matches("\\+3598[7-9][2-9]\\d{6}"))||(pom[1].matches("08[7-9][2-9]\\d{6}"))||(pom[1].matches("00359[7-9][2-9]\\d{7}"))){  
  
-	          phbook.put(pom[0],pom[1]);
+	          table.put(pom[0],pom[1]);
 	          pom2=in.readLine();
 	            }
 	else{
 		 pom2=in.readLine();
 	}
 	            }
-	    }catch(Exception ie){}
-		    return phbook;
+	    }catch(Exception e){}
+		    return table;
 	   }
 	
 		
