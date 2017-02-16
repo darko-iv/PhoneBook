@@ -63,7 +63,8 @@ public class PhoneBook {
 		
 			    
 			      InputStreamReader isr=new InputStreamReader(System.in);
-			      System.out.println("Input n to continue or e for end ");
+			      System.out.println();
+			      System.out.println("Input n to continue or e for end ?");
 			      
 			      next=(char)isr.read();
 			      
@@ -85,13 +86,13 @@ public class PhoneBook {
 	public static <K, V> void printMap(Map<K, V> map) {
         for (Map.Entry<K, V> entry : map.entrySet()) {
             System.out.println("Name : " + entry.getKey()
-				+ " Number : " + entry.getValue());
+				+ " -> Number : " + entry.getValue());
         }
     }
 
 
 	public static void addPhone() throws IOException{
-			try{
+			
 				
 			BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("Name: ");
@@ -104,11 +105,12 @@ public class PhoneBook {
 			   	System.out.println("Contact is added");
 	   
 			}
-			}		
-			catch(Exception e){
+			else{
 				System.out.println("Not valid phone");
 			}
-	}
+			}		
+			
+	
 	
 	public static void deletePhone() throws IOException{
 		
@@ -127,30 +129,28 @@ public class PhoneBook {
 		     		}
 		         
 	}
-	public static void searchContact(){
+	public static void searchContact() throws IOException{
 		if(table!=null){
-			try{
+			
 				table=readList() ;
 				BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
 				System.out.println("Search by name:");
 				String key=br.readLine();
 				String cu=table.get(key);
 				if(cu!=null){
-					System.out.println(key+" "+cu);
+					System.out.println("Name: "+key+" -> "+"Number: "+cu);
 	      
 	     }
 	  
-	     }catch(IOException ie){
-	    	 System.out.println("Not found");
-	    	 }
+	     }
 			 
 	     
 	    }
-	   }
+	   
 	 
 	
 	   public static HashMap<String,String>  readList(){
-		  // HashMap<String,String> phbook=new HashMap<>();
+		 
 		   
 		    try{
 		    	String line;
