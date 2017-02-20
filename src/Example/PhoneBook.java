@@ -13,12 +13,14 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.TreeMap;
 
 public class PhoneBook {
 
 	String name;
 	String number;
+ 
 
 	PhoneBook(String name,String phone){
 		this.name=name;
@@ -43,7 +45,9 @@ public class PhoneBook {
 
 	
 	static HashMap<String,String> table=new HashMap<>();
-	 
+	static int num=0;
+	static HashMap<String,Integer> calls=new HashMap<>();
+	
 	public static void main(String[] args) throws IOException {
 		table=readList();
 		Scanner sc=new Scanner(System.in);
@@ -52,13 +56,15 @@ public class PhoneBook {
 		char close='c';
 		 while(next=='n'){
 			showMenu();
-			System.out.println("Choose Number 1-4");
+			System.out.println("Choose Number 1-6");
 			choice=sc.nextInt();
 			switch(choice){
 			case 1:addPhone(); break;
 			case 2:deletePhone();break;
 			case 3:searchContact();break;
 			case 4: ViewContact();break;
+			case 5:outgoingCalls();break;
+			case 6:ougoingCallsPrinting();break;
 			}
 		
 			    
@@ -129,10 +135,60 @@ public class PhoneBook {
 		     		}
 		         
 	}
+	
+	public static void outgoingCalls() throws IOException{
+		
+		try{
+		 Map<String,String> myMap=new TreeMap<String,String>(table);
+		
+		 
+		if( num==0){
+			
+			for(Map.Entry<String, String> e:myMap.entrySet()){ 
+			
+			calls.put(e.getKey(), 0);
+			 Map.Entry<String, String> next = ((TreeMap<String, String>) myMap).higherEntry(e.getKey());
+			 num++;
+			}
+		}
+			BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+		 	
+			 System.out.println("Search by name:");
+				String key=br.readLine();
+				String cu=table.get(key);
+				if(calls.get(key)==null){
+					 System.out.println(key+" is not in the Phonebook");
+				 }
+				int m=calls.get(key);
+			 
+			 if(m>=0){
+				 m++;
+				 calls.put(key,m);
+			 }
+			 System.out.println(key+" is calling ...");
+		}
+		catch(Exception e){
+			
+				 System.out.println("Please try again!");
+			 
+		}
+		
+	
+	}
+	public static void ougoingCallsPrinting(){
+		 Map<String,Integer> myMap=new TreeMap<String,Integer>(calls);
+		 
+		for(Map.Entry<String, Integer> e:myMap.entrySet()){ 
+		
+			System.out.println(e.getKey()+" is caling "+e.getValue()+" times");
+			
+		}
+	}
+	
 	public static void searchContact() throws IOException{
 		if(table!=null){
 			
-				table=readList() ;
+				
 				BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
 				System.out.println("Search by name:");
 				String key=br.readLine();
@@ -141,10 +197,20 @@ public class PhoneBook {
 					System.out.println("Name: "+key+" -> "+"Number: "+cu);
 	      
 	     }
-	  
-	     }
-			 
+				else{
+					
+					System.out.println(key+" is not in the PhoneBook!");
+					}
 	     
+				
+		
+		
+		}
+			 
+		
+		
+	
+		
 	    }
 	   
 	 
@@ -170,8 +236,10 @@ public class PhoneBook {
 		 pom2=in.readLine();
 	}
 	            }
-	    }catch(Exception e){}
-		    return table;
+	    }catch(Exception e){
+	    	System.out.println("File is not read");
+	    }
+		   return table;
 	   }
 	
 		
@@ -183,5 +251,7 @@ public static void showMenu(){
 	System.out.println("2. Delete contact");
 	System.out.println("3. Find contact ");
 	System.out.println("4. Print contacts");
+	System.out.println("5. Do u want to call someone?");
+	System.out.println("6. Printing calling members from phonebook");
 }
 }
