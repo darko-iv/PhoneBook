@@ -127,8 +127,11 @@ public class PhoneBook {
 		         String key=br.readLine();
 		         if(table.containsKey(key)){
 		        	 table.remove(key); 
-		        	 System.out.println(key+" is deleted");	       
+		        	 calls.remove(key);
+		        	 System.out.println(key+" is deleted");
+		        	 
 		     }
+		        
 		     else{ 	 
 		         
 		         System.out.println(key+" is not in the Phonebook");	       
