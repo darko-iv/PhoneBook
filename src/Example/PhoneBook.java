@@ -26,7 +26,7 @@ public class PhoneBook {
 		this.number = phone;
 	}
 
-	public String getName() {
+	public String getName(){
 		return name;
 	}
 
