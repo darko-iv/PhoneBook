@@ -2,6 +2,7 @@ package Example;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,230 +19,78 @@ import java.util.TreeMap;
 
 public class PhoneBook {
 
-	private String name;
-	private static String number;
+	public PhoneBook(String path) {
 
-	PhoneBook(String name, String phone) {
-		this.name = name;
-		this.number = phone;
-	}
-
-	public String getName(){
-		return name;
-	}
-
-	public static String getPhone() {
-		return number;
-	}
-
-	public String setName(String name) {
-		return this.name = name;
-	}
-
-	public String setPhone(String phone) {
-		return this.number = phone;
-	}
-
-	static HashMap<String, PhoneBook> table = new HashMap<>();
-	static int num = 0;
-	static HashMap<String, Integer> calls = new HashMap<>();
-
-	public static void main(String[] args) throws IOException {
-		table = readList();
-		Scanner sc = new Scanner(System.in);
-		int choice;
-		char next = 'n';
-		char close = 'c';
-		while (next == 'n') {
-			showMenu();
-			System.out.println("Choose Number 1-6");
-			choice = sc.nextInt();
-			switch (choice) {
-			case 1:
-				addPhone();
-				break;
-			case 2:
-				deletePhone();
-				break;
-			case 3:
-				searchContact();
-				break;
-			case 4:
-				ViewContact();
-				break;
-			case 5:
-				outgoingCalls();
-				break;
-			case 6:
-				ougoingCallsPrinting();
-				break;
-			}
-
-			InputStreamReader isr = new InputStreamReader(System.in);
-			System.out.println();
-			System.out.println("Input n to continue or e for end ?");
-
-			next = (char) isr.read();
-
-			if (next == 'e') {
-				break;
-			}
-		}
-
-	}
-
-	public static void ViewContact() {
-		Map<String, PhoneBook> treeMap = new TreeMap<String, PhoneBook>(table);
-		printMap(treeMap);
-
-	}
-
-	public static <String, PhoneBook> void printMap(Map<String, PhoneBook> map) {
-		for (Map.Entry<String, PhoneBook> entry : map.entrySet()) {
-			PhoneBook name = (PhoneBook) entry.getKey();
-			PhoneBook number = entry.getValue();
-			System.out.println("Name : " + name + " -> Number : " + number);
-		}
-	}
-
-	public static void addPhone() throws IOException {
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Name: ");
-		String name = br.readLine();
-		System.out.println("Phone: ");
-		String phone = br.readLine();
-		PhoneBook pb = new PhoneBook(name, phone);
-		if ((phone.matches("\\+3598[7-9][2-9]\\d{6}")) || (phone.matches("08[7-9][2-9]\\d{6}"))
-				|| (phone.matches("00359[7-9][2-9]\\d{7}"))) {
-
-			table.put(name, pb);
-			System.out.println("Contact is added");
-
-		} else {
-			System.out.println("Not valid phone");
-		}
-	}
-
-	public static void deletePhone() throws IOException {
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Name:");
-		String key = br.readLine();
-		if (table.containsKey(key)) {
-			table.remove(key);
-			calls.remove(key);
-			System.out.println(key + " is deleted");
-
-		}
-
-		else {
-
-			System.out.println(key + " is not in the Phonebook");
-		}
-
-	}
-
-	public static void outgoingCalls() throws IOException {
+		String line;
+		BufferedReader in;
 
 		try {
-			Map<String, PhoneBook> myMap = new TreeMap<String, PhoneBook>(table);
+			in = new BufferedReader(new FileReader(path));
+			line = in.readLine();
+			while (line != null) {
 
-			if (num == 0) {
+				String[] data = line.split(",");
+				if (isValidNumber(data[1])) {
 
-				for (Map.Entry<String, PhoneBook> e : myMap.entrySet()) {
+					table.put(data[0], data[1]);
 
-					calls.put(e.getKey(), 0);
-					Map.Entry<String, PhoneBook> next = ((TreeMap<String, PhoneBook>) myMap).higherEntry(e.getKey());
-					num++;
 				}
-			}
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				line = in.readLine();
 
-			System.out.println("Search by name:");
-			String key = br.readLine();
-			PhoneBook cu = table.get(key);
-			if (calls.get(key) == null) {
-				System.out.println(key + " is not in the Phonebook");
 			}
-			int m = calls.get(key);
 
-			if (m >= 0) {
-				m++;
-				calls.put(key, m);
-			}
-			System.out.println(key + " is calling ...");
-		} catch (Exception e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-			System.out.println("Please try again!");
+	public PhoneBook() {
+	}
+
+	private Map<String, String> table = new TreeMap<String, String>();
+
+	public static boolean isValidNumber(String number) {
+		if (number.matches("\\+3598[7-9][2-9]\\d{6}") || number.matches("08[7-9][2-9]\\d{6}")
+				|| number.matches("00359[7-9][2-9]\\d{7}")) {
+			return true;
+		}
+		return false;
+	}
+
+	public void viewContact() {
+		printMap(table);
+
+	}
+
+	public <K, V> void printMap(Map<K, V> map) {
+		for (Map.Entry<K, V> entry : map.entrySet()) {
+			System.out.println(entry.getKey() + "," + entry.getValue());
+		}
+	}
+
+	public void add(String name, String number) {
+
+		if (isValidNumber(number)) {
+
+			table.put(name, number);
+
+		}
+	}
+
+	public void delete(String name) {
+
+		if (table.containsKey(name)) {
+			table.remove(name);
 
 		}
 
 	}
 
-	public static void ougoingCallsPrinting() {
-		Map<String, Integer> myMap = new TreeMap<String, Integer>(calls);
+	public String find(String name) {
 
-		for (Map.Entry<String, Integer> e : myMap.entrySet()) {
-
-			System.out.println(e.getKey() + " is caling " + e.getValue() + " times");
-
-		}
-	}
-
-	public static void searchContact() throws IOException {
-		if (table != null) {
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			System.out.println("Search by name:");
-			String key = br.readLine();
-			PhoneBook cu = table.get(key);
-			if (cu != null) {
-				System.out.println("Name: " + key + " -> " + "Number: " + cu);
-
-			} else {
-
-				System.out.println(key + " is not in the PhoneBook!");
-			}
-
-		}
+		String number = table.get(name);
+		return name + "," + number;
 
 	}
 
-	public static HashMap<String, PhoneBook> readList() {
-
-		try {
-			String line;
-			BufferedReader in;
-
-			in = new BufferedReader(new FileReader(
-					"C:\\Users\\darko.ivanovski\\workspace\\ExampleTest\\bin\\Example\\infophonebook.txt"));
-			String pom2 = in.readLine();
-			while (pom2 != null) {
-
-				String[] pom = pom2.split(",");
-				PhoneBook pb = new PhoneBook(pom[0], pom[1]);
-				if ((pom[1].matches("\\+3598[7-9][2-9]\\d{6}")) || (pom[1].matches("08[7-9][2-9]\\d{6}"))
-						|| (pom[1].matches("00359[7-9][2-9]\\d{7}"))) {
-
-					table.put(pom[0], pb);
-					pom2 = in.readLine();
-				} else {
-					pom2 = in.readLine();
-				}
-			}
-		} catch (Exception e) {
-			System.out.println("File is not read");
-		}
-		return table;
-	}
-
-	public static void showMenu() {
-		System.out.println("1. Add contact to phonebook");
-		System.out.println("2. Delete contact");
-		System.out.println("3. Find contact ");
-		System.out.println("4. Print contacts");
-		System.out.println("5. Do u want to call someone?");
-		System.out.println("6. Printing calling members from phonebook");
-	}
 }
